@@ -1,6 +1,5 @@
 #!/bin/bash
 
-export PGPASSWORD="test.databas3"
 ###########################
 ####### LOAD CONFIG #######
 ###########################
