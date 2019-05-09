@@ -6,5 +6,6 @@ RUN mkdir /tmp/azcopy && \
     tar -xf /tmp/azcopy/azcopy.tar.gz -C /tmp/azcopy &&  \
     /tmp/azcopy/install.sh
 RUN rm -rf /tmp/azcopy
-WORKDIR /root/pg_backup
 RUN chmod +x *.sh
+RUN cp backupcron /etc/cron.d/ && chmod 0644 /etc/cron.d/backupcron
+WORKDIR /root/pg_backup
