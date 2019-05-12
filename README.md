@@ -4,7 +4,7 @@ POSTGRESQL backup script and auto upload to azure blob storage.
 
 ## Usage
 
-Make sure to define environment variables below to use the script:
+Make sure to set environment variables below to use the script:
 
 ```bash
 export PGPASSWORD=""
