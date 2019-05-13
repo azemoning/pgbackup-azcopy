@@ -8,6 +8,7 @@ RUN mkdir /tmp/azcopy && \
 RUN rm -rf /tmp/azcopy
 WORKDIR /root/pg_backup
 RUN chmod +x *.sh
+RUN env | grep PG > env.env
 RUN cp backupcron /etc/cron.d/ && chmod 0644 /etc/cron.d/backupcron
 RUN touch /var/log/cron.log
 CMD cron && tail -f /var/log/cron.log
