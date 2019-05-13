@@ -163,11 +163,11 @@ do
  
 done
 
-for sql in $FINAL_BACKUP_DIR"/"*.sql.gz; do
-        mv "$sql" "$(basename "$sql" .sql.gz).sql.gz.old"
-done
-for dump in $FINAL_BACKUP_DIR"/"*.dump; do
-        mv "$dump" "$(basename "$dump" .dump).dump.old"
-done
+# for sql in $FINAL_BACKUP_DIR"/"*.sql.gz; do
+#         mv "$sql" "$(basename "$sql" .sql.gz).sql.gz.old"
+# done
+# for dump in $FINAL_BACKUP_DIR"/"*.dump; do
+#         mv "$dump" "$(basename "$dump" .dump).dump.old"
+# done
 
 echo -e "\nAll database backups complete!"
