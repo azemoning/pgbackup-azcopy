@@ -1,5 +1,5 @@
 FROM microsoft/dotnet:latest
-RUN apt-get update && apt-get install -y cron rsync libunwind8 postgresql-client
+RUN apt-get update && apt-get install -y cron rsync libunwind8 postgresql-client rename
 RUN mkdir /root/pg_backup && git clone https://github.com/azemoning/pgbackrest.git /root/pg_backup
 RUN mkdir /tmp/azcopy && \
     wget -O /tmp/azcopy/azcopy.tar.gz https://aka.ms/downloadazcopylinux64 &&  \
