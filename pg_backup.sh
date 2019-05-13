@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export $(cat /root/pg_backup/env.env | xargs)
+
 ###########################
 ####### LOAD CONFIG #######
 ###########################
@@ -163,7 +165,18 @@ do
  
 done
 
-rename 's/.sql.gz/.sql.gz.old/' $FINAL_BACKUP_DIR'*.sql.gz'
-rename 's/.dump/.dump.old/' $FINAL_BACKUP_DIR'*.dump'
-
-echo -e "\nAll database backups complete!"
+countsql = `ls -1 *.sql.gz 2>/dev/null | wc -l`
+countdump = `ls -1 *.dump 2>/dev/null | wc -l`
+if [ $countsql != 0]
+then
+	rename 's/.sql.gz/.sql.gz.old/' $FINAL_BACKUP_DIR'*.sql.gz'
+	echo -e "\nAll database backups complete!"
+else
+	echo -e "\nAll database backups complete!"
+fi
+if [ $countdump != 0]
+then
+	rename 's/.dump/.dump.old/' $FINAL_BACKUP_DIR'*.dump'
+	echo -e "\nAll database backups complete!"
+else
+	echo -e "\nAll database backups complete!"
