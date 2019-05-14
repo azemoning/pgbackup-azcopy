@@ -8,7 +8,16 @@ RUN mkdir /tmp/azcopy && \
 RUN rm -rf /tmp/azcopy
 WORKDIR /root/pg_backup
 RUN chmod +x *.sh
-RUN env | grep PG > env.env
 RUN cp backupcron /etc/cron.d/ && chmod 0644 /etc/cron.d/backupcron
 RUN touch /var/log/cron.log
-CMD cron && tail -f /var/log/cron.log
+
+#######################################
+# SCRIPT BELOW IS FOR DOCKERFILE      #
+# AFTER BASE IMAGE HAS BEEN BUILT     #
+#######################################
+# ENV PGPASSWORD="test.databas3"
+# ENV PGDB_HOST="40.90.188.178"
+# ENV PGDB_USERNAME="telinmy.testing"
+# ENV PGDB_PORT="5000"
+# RUN env > env.env
+# CMD cron && tail -f /var/log/cron.log
