@@ -193,4 +193,4 @@ azcopy \
 	--dest-key $BLOB_ACCOUNT_KEY \
 	--recursive
 
-echo -e "All databases backup process completed successfully!."
+echo -e "\nAll databases backup process completed successfully!."
