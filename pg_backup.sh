@@ -165,8 +165,8 @@ do
  
 done
 
-countsql = `ls -1 *.sql.gz 2>/dev/null | wc -l`
-countdump = `ls -1 *.dump 2>/dev/null | wc -l`
+countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
+countdump=`ls $FINAL_BACKUP_DIR -1 *.dump 2>/dev/null | wc -l`
 if [ $countsql != 0 ]
 then
 	rename 's/.sql.gz/.sql.gz.old/' $FINAL_BACKUP_DIR'*.sql.gz'
@@ -180,3 +180,4 @@ then
 	echo -e "\nAll .dump database backups complete and renamed successfully!"
 else
 	echo -e "\nAll .dump database backups complete, nothing renamed!"
+fi
