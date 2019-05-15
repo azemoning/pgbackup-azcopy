@@ -72,7 +72,25 @@ if ! mkdir -p $FINAL_BACKUP_DIR; then
 	exit 1;
 fi;
  
- 
+#############################
+### RENAME EXISTING FILES ###
+#############################
+
+countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
+countdump=`ls $FINAL_BACKUP_DIR -1 *.dump 2>/dev/null | wc -l`
+if [ $countsql != 0 ]
+then
+	cd $FINAL_BACKUP_DIR
+	rename 's/.sql.gz/.sql.gz.old/' *.sql.gz
+	echo -e "\nAll old .sql.gz database backups renamed successfully!"
+fi
+if [ $countdump != 0 ] 
+then
+	cd $FINAL_BACKUP_DIR
+	rename 's/.dump/.dump.old/' *.dump
+	echo -e "\nAll old .dump database backups renamed successfully!"
+fi
+
 #######################
 ### GLOBALS BACKUPS ###
 #######################
@@ -164,22 +182,3 @@ do
 	fi
  
 done
-
-countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
-countdump=`ls $FINAL_BACKUP_DIR -1 *.dump 2>/dev/null | wc -l`
-if [ $countsql != 0 ]
-then
-	cd $FINAL_BACKUP_DIR
-	rename 's/.sql.gz/.sql.gz.old/' *.sql.gz
-	echo -e "\nAll .sql.gz database backups complete and renamed successfully!"
-else
-	echo -e "\nAll .sql.gz database backups complete, nothing renamed!"
-fi
-if [ $countdump != 0 ] 
-then
-	cd $FINAL_BACKUP_DIR
-	rename 's/.dump/.dump.old/' *.dump
-	echo -e "\nAll .dump database backups complete and renamed successfully!"
-else
-	echo -e "\nAll .dump database backups complete, nothing renamed!"
-fi
