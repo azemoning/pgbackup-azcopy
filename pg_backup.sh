@@ -64,6 +64,7 @@ fi;
  
 FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`/"
 FINAL_BACKUP_NAME="_`date +\%Y-\%m-\%d-\%T`"
+FINAL_BACKUP_DIR_OLD=$BACKUP_DIR"old/`date +\%Y-\%m-\%d`/"
  
 echo "Making backup directory in $FINAL_BACKUP_DIR"
  
@@ -76,19 +77,22 @@ fi;
 ### RENAME EXISTING FILES ###
 #############################
 
+mkdir $FINAL_BACKUP_DIR_OLD
 countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
 countdump=`ls $FINAL_BACKUP_DIR -1 *.dump 2>/dev/null | wc -l`
 if [ $countsql != 0 ]
 then
 	cd $FINAL_BACKUP_DIR
 	rename 's/.sql.gz/.sql.gz.old/' *.sql.gz
-	echo -e "\nAll old .sql.gz database backups renamed successfully!"
+	find . -name '*.old' -exec mv '{}' $FINAL_BACKUP_DIR_OLD \;
+	echo -e "\nAll old .sql.gz database backups renamed & moved successfully!"
 fi
 if [ $countdump != 0 ] 
 then
 	cd $FINAL_BACKUP_DIR
 	rename 's/.dump/.dump.old/' *.dump
-	echo -e "\nAll old .dump database backups renamed successfully!"
+	find . -name '*.old' -exec mv '{}' $FINAL_BACKUP_DIR_OLD \;
+	echo -e "\nAll old .dump database backups renamed & moved successfully!"
 fi
 
 #######################
