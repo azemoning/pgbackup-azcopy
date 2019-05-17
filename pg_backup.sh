@@ -77,7 +77,7 @@ fi;
 ### RENAME EXISTING FILES ###
 #############################
 
-mkdir $FINAL_BACKUP_DIR_OLD
+mkdir -p $FINAL_BACKUP_DIR_OLD
 countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
 countdump=`ls $FINAL_BACKUP_DIR -1 *.dump 2>/dev/null | wc -l`
 if [ $countsql != 0 ]
