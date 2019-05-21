@@ -192,7 +192,7 @@ done
 ######################################
 
 azcopy \
-	--source $FINAL_BACKUP_DIR \
+	--source $BACKUP_DIR \
 	--destination $BLOB_LINK_CONTAINER \
 	--dest-key $BLOB_ACCOUNT_KEY \
 	--recursive
