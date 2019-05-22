@@ -64,7 +64,7 @@ fi;
  
 FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`/"
 FINAL_BACKUP_NAME="_`date +\%Y-\%m-\%d-\%T`"
-FINAL_BACKUP_DIR_OLD=$BACKUP_DIR"old/`date +\%Y-\%m-\%d`/"
+FINAL_BACKUP_DIR_OLD="/root/pg_backup/backup_dir_old/`date +\%Y-\%m-\%d`/"
  
 echo "Making backup directory in $FINAL_BACKUP_DIR"
  
