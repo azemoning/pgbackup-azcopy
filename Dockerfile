@@ -1,5 +1,7 @@
 FROM microsoft/dotnet:latest
-RUN apt-get update && apt-get install -y cron rsync libunwind8 postgresql-client rename
+RUN touch /etc/apt/sources.list.d/pgdg.list && echo deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main >> /etc/apt/sources.list.d/pgdg.list
+RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN apt-get update && apt-get install -y cron rsync libunwind8 postgresql-client-10 rename
 RUN mkdir /root/pg_backup && git clone https://github.com/azemoning/pgbackrest.git /root/pg_backup
 RUN mkdir /tmp/azcopy && \
     wget -O /tmp/azcopy/azcopy.tar.gz https://aka.ms/downloadazcopylinux64 &&  \
