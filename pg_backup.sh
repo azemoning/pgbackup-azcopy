@@ -95,10 +95,13 @@ then
 	echo -e "\nAll old .dump database backups renamed & moved successfully!"
 fi
 
+
 #######################
 ### GLOBALS BACKUPS ###
 #######################
  
+curl -fsS --retry 3 https://hc-ping.com/ea9bea5f-1b51-4f2a-9b86-5e065ccd9d50 > /dev/null 
+
 echo -e "\n\nPerforming globals backup"
 echo -e "--------------------------------------------\n"
  
@@ -190,6 +193,8 @@ done
 ######################################
 ### COPY BACKUP FILE TO AZURE BLOB ###
 ######################################
+
+curl -fsS --retry 3 https://hc-ping.com/931222a3-216b-4981-8eb8-73e630ee6bd5 > /dev/null
 
 azcopy \
 	--source $BACKUP_DIR \
