@@ -7,6 +7,7 @@ POSTGRESQL backup script and auto upload to azure blob storage.
 Make sure to set environment variables below to use the script:
 
 ```bash
+export PGSSLMODE="allow"
 export PGPASSWORD=""
 export PGDB_HOST=""
 export PGDB_USERNAME=""
@@ -19,6 +20,7 @@ export BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
 Define on Dockerfile:
 
 ```
+ENV PGSSLMODE"allow"
 ENV PGPASSWORD=""
 ENV PGDB_HOST=""
 ENV PGDB_USERNAME=""
