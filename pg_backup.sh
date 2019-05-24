@@ -100,7 +100,8 @@ fi
 ### GLOBALS BACKUPS ###
 #######################
  
-curl -fsS --retry 3 https://hc-ping.com/ea9bea5f-1b51-4f2a-9b86-5e065ccd9d50 > /dev/null 
+## PING HEALTHCHECKS BEFORE STARTING BACKUP
+curl -fsS --retry 3 https://hc-ping.com/15a8af78-b3f1-4b2e-8b4f-17a86979f3f5 > /dev/null 
 
 echo -e "\n\nPerforming globals backup"
 echo -e "--------------------------------------------\n"
@@ -194,7 +195,8 @@ done
 ### COPY BACKUP FILE TO AZURE BLOB ###
 ######################################
 
-curl -fsS --retry 3 https://hc-ping.com/931222a3-216b-4981-8eb8-73e630ee6bd5 > /dev/null
+## PING HEALTHCHECKS BEFORE UPLOADING BACKUP FILES
+curl -fsS --retry 3 https://hc-ping.com/847a8225-81fd-4100-a0dd-702d2201aa48 > /dev/null
 
 azcopy \
 	--source $BACKUP_DIR \
@@ -202,4 +204,6 @@ azcopy \
 	--dest-key $BLOB_ACCOUNT_KEY \
 	--recursive
 
+## PING HEALTHCHECKS AFTER UPLOADING BACKUP FILES
+curl -fsS --retry 3 https://hc-ping.com/e4469c45-aeaa-4462-b535-5ba7829c6bd8 > /dev/null
 echo -e "\nAll databases backup process completed successfully!."
