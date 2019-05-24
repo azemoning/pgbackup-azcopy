@@ -30,4 +30,7 @@ ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
 
 ```
 ## Configuring cron schedule
-//coming soon.
+
+To configure cron schedule, please refer to the official cron formatting.  
+**Do not remove the empty line at the end of the cron file. It is required to run the cron job.**  
+If there is no empty line at the file, please add by yourself.
