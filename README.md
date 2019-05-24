@@ -8,11 +8,11 @@ Make sure to set environment variables below to use the script:
 
 ```bash
 export PGSSLMODE="allow"
-export PGPASSWORD=""
-export PGDB_HOST=""
-export PGDB_USERNAME=""
-export PGDB_PORT=""
-export BLOB_ACCOUNT_KEY=""
+export PGPASSWORD="password"
+export PGDB_HOST="dbhost/ip"
+export PGDB_USERNAME="user"
+export PGDB_PORT="5432"
+export BLOB_ACCOUNT_KEY="account-key"
 export BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
 ```
 ### OR
