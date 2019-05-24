@@ -1,0 +1,2 @@
+# ignore dockerfile for deploy to production
+deploy_production.dockerfile
