@@ -21,11 +21,11 @@ Define on Dockerfile:
 
 ```
 ENV PGSSLMODE"allow"
-ENV PGPASSWORD=""
-ENV PGDB_HOST=""
-ENV PGDB_USERNAME=""
-ENV PGDB_PORT=""
-ENV BLOB_ACCOUNT_KEY=""
+ENV PGPASSWORD="password"
+ENV PGDB_HOST="dbhost/ip"
+ENV PGDB_USERNAME="user"
+ENV PGDB_PORT="5432"
+ENV BLOB_ACCOUNT_KEY="account-key"
 ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
 
 ```
