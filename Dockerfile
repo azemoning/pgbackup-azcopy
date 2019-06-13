@@ -9,6 +9,7 @@ RUN mkdir /tmp/azcopy && \
     tar -xf /tmp/azcopy/azcopy.tar.gz -C /tmp/azcopy &&  \
     /tmp/azcopy/install.sh && \
     rm -rf /tmp/azcopy
+RUN cp /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
 WORKDIR /root/pg_backup
 RUN chmod +x *.sh && \
     cp backupcron /etc/cron.d/ && chmod 0644 /etc/cron.d/backupcron && \
