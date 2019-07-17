@@ -1,6 +1,17 @@
 #!/bin/bash
 
+## export environment variable into cron env
 export $(cat /root/pg_backup/env.env | xargs)
+
+
+## kill running cpulimit process before starting new process
+pkill cpulimit
+
+## starting cpulimit process
+cpulimit -e azcopy -l 20 -b
+cpulimit -e pg_dumpall -l 30 -b
+cpulimit -e pg_dump -l 30 -b 
+
 
 ###########################
 ####### LOAD CONFIG #######
