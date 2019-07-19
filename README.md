@@ -4,10 +4,28 @@ POSTGRESQL backup script and auto upload to azure blob storage.
 
 ## Usage
 
+### Prerequisite
+
+Before configuring or deploying image, you need to create an account at [Healthchecks.io](https://healthcheks.io).\
+Create new project and add check on that project.\
+After adding a new check, copy **Ping URL** and replace the url at the curl command on [pg_backup.sh](https://github.com/azemoning/pgbackrest/blob/master/pg_backup.sh).\
+
+Example:
+
+```bash
+
+curl -fsS --retry 3 https://hc-ping.com/replace_this_with_your_own_url > /dev/null 
+
+
+```
+
+After that, you can rebuild the image and then deploy it on your own project.
+
+
 ### Deploy  
 
 ```dockerfile
-FROM azemoning/pgbackup_azcopy:latest
+FROM azemoning/pgbackup_azcopy:latest #Or change with your own image
 ENV PGSSLMODE="allow"
 ENV PGPASSWORD="password"
 ENV PGDB_HOST="host"
@@ -46,7 +64,7 @@ ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
 
 ```
 
-## Configuring cron schedule
+### Configuring cron schedule
 
 To configure cron schedule, please refer to the official cron formatting.\
 **Do not remove the empty line at the end of the cron file. It is required to run the cron job.**\
