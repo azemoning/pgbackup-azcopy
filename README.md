@@ -8,7 +8,7 @@ POSTGRESQL backup script and auto upload to azure blob storage.
 
 Before configuring or deploying image, you need to create an account at [Healthchecks.io](https://healthcheks.io).\
 Create new project and add check on that project.\
-After adding a new check, copy **Ping URL** and replace the url at the curl command on [pg_backup.sh](https://github.com/azemoning/pgbackrest/blob/master/pg_backup.sh).\
+After adding a new check, copy **Ping URL** and replace the url at the curl command on [pg_backup.sh](https://github.com/azemoning/pgbackrest/blob/master/pg_backup.sh).
 
 Example:
 
@@ -20,6 +20,12 @@ curl -fsS --retry 3 https://hc-ping.com/replace_this_with_your_own_url > /dev/nu
 ```
 
 After that, you can rebuild the image and then deploy it on your own project.
+
+```bash
+
+docker build -t pgbackup_azcopy .
+
+```
 
 
 ### Deploy  
