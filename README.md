@@ -28,19 +28,6 @@ docker build -t pgbackup_azcopy .
 
 ### Deploy  
 
-```dockerfile
-FROM pgbackup_azcopy ## CHANGE WITH YOUR OWN IMAGE
-ENV PGSSLMODE="allow"
-ENV PGPASSWORD="password"
-ENV PGDB_HOST="host"
-ENV PGDB_USERNAME="username"
-ENV PGDB_PORT="5432"
-ENV BLOB_ACCOUNT_KEY="account-key"
-ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
-RUN env > env.env
-CMD cron && tail -f /var/log/cron_backup.log
-```
-
 Make sure to set environment variables below to use the script:
 
 ```bash
@@ -66,6 +53,20 @@ ENV PGDB_PORT="5432"
 ENV BLOB_ACCOUNT_KEY="account-key"
 ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
 
+```
+And then deploy with this dockerfile
+
+```dockerfile
+FROM pgbackup_azcopy ## CHANGE WITH YOUR OWN IMAGE
+ENV PGSSLMODE="allow"
+ENV PGPASSWORD="password"
+ENV PGDB_HOST="host"
+ENV PGDB_USERNAME="username"
+ENV PGDB_PORT="5432"
+ENV BLOB_ACCOUNT_KEY="account-key"
+ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
+RUN env > env.env
+CMD cron && tail -f /var/log/cron_backup.log
 ```
 
 ### Configuring cron schedule
