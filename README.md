@@ -14,7 +14,7 @@ Example:
 
 ```bash
 
-curl -fsS --retry 3 https://hc-ping.com/replace_this_with_your_own_url > /dev/null 
+curl -fsS --retry 3 https://hc-ping.com/replace_this_with_your_own_url > /dev/null
 
 
 ```
@@ -27,11 +27,10 @@ docker build -t pgbackup_azcopy .
 
 ```
 
-
 ### Deploy  
 
 ```dockerfile
-FROM azemoning/pgbackup_azcopy:latest #Or change with your own image
+FROM pgbackup_azcopy ## CHANGE WITH YOUR OWN IMAGE
 ENV PGSSLMODE="allow"
 ENV PGPASSWORD="password"
 ENV PGDB_HOST="host"
