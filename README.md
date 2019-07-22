@@ -6,8 +6,7 @@ POSTGRESQL backup script and auto upload to azure blob storage.
 
 ### Prerequisite
 
-Before configuring or deploying image, you need to create an account at [Healthchecks.io](https://healthcheks.io).\
-Create new project and add check on that project.\
+Before configuring or deploying image, you need to create an account at [Healthchecks.io](https://healthcheks.io). Create new project and add check on that project.\
 After adding a new check, copy **Ping URL** and replace the url at the curl command on [pg_backup.sh](https://github.com/azemoning/pgbackrest/blob/master/pg_backup.sh).
 
 Example:
