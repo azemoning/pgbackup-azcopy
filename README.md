@@ -70,6 +70,32 @@ RUN env > env.env
 CMD cron && tail -f /var/log/cron_backup.log
 ```
 
+### Restoring backup file
+
+Clone this repository.
+
+```bash
+
+git clone https://github.com/azemoning/pgbackrest.git
+
+```
+
+Open **pg_restore.sh** with your text editor.\
+Change the value from all of environment variables according to your PostgreSQL configuration.\
+Example:
+
+```bash
+
+export PGSSLMODE="allow" #always allow this
+export PGPASSWORD="password"
+export PGDB_HOST="db.example.com"
+export PGDB_PORT="5432"
+export PGDB_USER="foo"
+export PGDB_DATABASE="foodb"
+export BACKUP_FILE_NAME="foodb_backup.dump"
+
+```
+
 ### Configuring cron schedule
 
 To configure cron schedule, please refer to the official cron formatting.\
