@@ -12,18 +12,13 @@ After adding a new check, copy **Ping URL** and replace the url at the curl comm
 Example:
 
 ```bash
-
 curl -fsS --retry 3 https://hc-ping.com/replace_this_with_your_own_url > /dev/null
-
-
 ```
 
 After that, you can rebuild the image and then deploy it on your own project.
 
 ```bash
-
 docker build -t pgbackup_azcopy .
-
 ```
 
 ### Deploy  
@@ -52,7 +47,6 @@ ENV PGDB_USERNAME="username"
 ENV PGDB_PORT="5432"
 ENV BLOB_ACCOUNT_KEY="account-key"
 ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
-
 ```
 
 And then deploy with this dockerfile
@@ -75,9 +69,7 @@ CMD cron && tail -f /var/log/cron_backup.log
 Clone this repository.
 
 ```bash
-
 git clone https://github.com/azemoning/pgbackrest.git
-
 ```
 
 Open **pg_restore.sh** with your text editor.\
@@ -85,7 +77,6 @@ Change the value from all of environment variables according to your PostgreSQL 
 Example:
 
 ```bash
-
 export PGSSLMODE="allow" #always allow this
 export PGPASSWORD="password"
 export PGDB_HOST="db.example.com"
@@ -93,7 +84,18 @@ export PGDB_PORT="5432"
 export PGDB_USER="foo"
 export PGDB_DATABASE="foodb"
 export BACKUP_FILE_NAME="foodb_backup.dump"
+```
 
+Save your configuration and then change script file permission.
+
+```bash
+chmod +x pg_restore.sh
+```
+
+Run the script with the following command
+
+```bash
+./pg_restore.sh
 ```
 
 ### Configuring cron schedule
