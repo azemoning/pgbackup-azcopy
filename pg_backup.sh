@@ -7,11 +7,8 @@ export $(cat /root/pg_backup/env.env | xargs)
 ## kill running cpulimit process before starting new process
 pkill cpulimit
 
-## starting cpulimit process
+## limit azcopy process
 cpulimit -e azcopy -l 20 -b
-cpulimit -e pg_dumpall -l 30 -b
-cpulimit -e pg_dump -l 30 -b 
-
 
 ###########################
 ####### LOAD CONFIG #######
@@ -72,7 +69,7 @@ fi;
 #### START THE BACKUPS ####
 ###########################
  
- 
+	
 FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`/"
 FINAL_BACKUP_NAME="_`date +\%Y-\%m-\%d-\%T`"
 FINAL_BACKUP_DIR_OLD="/root/pg_backup/backup_dir_old/`date +\%Y-\%m-\%d`/"
@@ -87,6 +84,8 @@ fi;
 #############################
 ### RENAME EXISTING FILES ###
 #############################
+echo -e " "
+echo -e "Rename existing backup files to *.old files..."
 
 mkdir -p $FINAL_BACKUP_DIR_OLD
 countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
@@ -121,7 +120,7 @@ if [ $ENABLE_GLOBALS_BACKUPS = "yes" ]
 then
         echo "Globals backup"
  
-        if ! pg_dumpall -g -h "$HOSTNAME" -U "$USERNAME" -p $PORT | gzip > $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
+        if ! cpulimit -l 30 -- pg_dumpall -g -h "$HOSTNAME" -U "$USERNAME" -p $PORT | gzip > $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
                 echo "[!!ERROR!!] Failed to produce globals backup" 1>&2
         else
                 mv $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz.in_progress $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz
@@ -182,7 +181,7 @@ do
 	then
 		echo "Plain backup of $DATABASE"
  
-		if ! pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT | gzip > $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
+		if ! cpulimit -l 30 -- pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT | gzip > $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
 			echo "[!!ERROR!!] Failed to produce plain backup database $DATABASE" 1>&2
 		else
 			mv $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz
@@ -193,7 +192,7 @@ do
 	then
 		echo "Custom backup of $DATABASE"
  
-		if ! pg_dump -Fc -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT -f $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress; then
+		if ! pg_dump -Fc -Z 0 -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT -f $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress; then
 			echo "[!!ERROR!!] Failed to produce custom backup database $DATABASE" 1>&2
 		else
 			mv $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump
@@ -202,6 +201,23 @@ do
  
 done
 
+#############################################
+### CLEANING DIRECTORY FROM *.in_progress ###
+#############################################
+
+echo -e " "
+echo -e "Cleaning directory from *.in_progress files..."
+
+countInProgress=`ls $FINAL_BACKUP_DIR -1 *.in_progress 2>/dev/null | wc -l`
+if [ $countInProgress != 0 ]
+then
+	cd $FINAL_BACKUP_DIR
+	find . -name '*.in_progress' -exec mv '{}' $FINAL_BACKUP_DIR_OLD \;
+	echo -e "\nDirectory cleaned from *.in_progress files."
+fi
+
+echo -e " "
+
 ######################################
 ### COPY BACKUP FILE TO AZURE BLOB ###
 ######################################
@@ -209,12 +225,18 @@ done
 ## PING HEALTHCHECKS BEFORE UPLOADING BACKUP FILES
 curl -fsS --retry 3 https://hc-ping.com/847a8225-81fd-4100-a0dd-702d2201aa48 > /dev/null
 
+echo -e " "
+echo -e "Uploading backup files to Azure Storage..."
+
 azcopy \
 	--source $BACKUP_DIR \
 	--destination $BLOB_LINK_CONTAINER \
 	--dest-key $BLOB_ACCOUNT_KEY \
-	--recursive
+	--recursive \
+	--quiet
 
+echo -e "Backup files uploaded."
+echo -e " "
 ## PING HEALTHCHECKS AFTER UPLOADING BACKUP FILES
 curl -fsS --retry 3 https://hc-ping.com/e4469c45-aeaa-4462-b535-5ba7829c6bd8 > /dev/null
 echo -e "\nAll databases backup process completed successfully!."
