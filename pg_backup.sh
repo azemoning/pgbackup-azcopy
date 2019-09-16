@@ -8,7 +8,7 @@ export $(cat /root/pg_backup/env.env | xargs)
 pkill cpulimit
 
 ## limit azcopy process
-cpulimit -e azcopy -l 20 -b
+#cpulimit -e azcopy -l 20 -b
 
 ###########################
 ####### LOAD CONFIG #######
@@ -69,10 +69,10 @@ fi;
 #### START THE BACKUPS ####
 ###########################
  
-	
-FINAL_BACKUP_DIR=$BACKUP_DIR"`date +\%Y-\%m-\%d`/"
-FINAL_BACKUP_NAME="_`date +\%Y-\%m-\%d-\%T`"
-FINAL_BACKUP_DIR_OLD="/root/pg_backup/backup_dir_old/`date +\%Y-\%m-\%d`/"
+CURRENT_DATE="`date +\%Y-\%m-\%d`"
+CURRENT_DATE_WITH_TIME="`date +\%Y-\%m-\%d-\%T`"
+FINAL_BACKUP_DIR=$BACKUP_DIR"$CURRENT_DATE/"
+FINAL_BACKUP_NAME="_$CURRENT_DATE_WITH_TIME"
  
 echo "Making backup directory in $FINAL_BACKUP_DIR"
  
@@ -81,37 +81,12 @@ if ! mkdir -p $FINAL_BACKUP_DIR; then
 	exit 1;
 fi;
  
-#############################
-### RENAME EXISTING FILES ###
-#############################
-echo -e " "
-echo -e "Rename existing backup files to *.old files..."
-
-mkdir -p $FINAL_BACKUP_DIR_OLD
-countsql=`ls $FINAL_BACKUP_DIR -1 *.sql.gz 2>/dev/null | wc -l`
-countdump=`ls $FINAL_BACKUP_DIR -1 *.dump 2>/dev/null | wc -l`
-if [ $countsql != 0 ]
-then
-	cd $FINAL_BACKUP_DIR
-	rename 's/.sql.gz/.sql.gz.old/' *.sql.gz
-	find . -name '*.old' -exec mv '{}' $FINAL_BACKUP_DIR_OLD \;
-	echo -e "\nAll old .sql.gz database backups renamed & moved successfully!"
-fi
-if [ $countdump != 0 ] 
-then
-	cd $FINAL_BACKUP_DIR
-	rename 's/.dump/.dump.old/' *.dump
-	find . -name '*.old' -exec mv '{}' $FINAL_BACKUP_DIR_OLD \;
-	echo -e "\nAll old .dump database backups renamed & moved successfully!"
-fi
-
-
 #######################
 ### GLOBALS BACKUPS ###
 #######################
  
 ## PING HEALTHCHECKS BEFORE STARTING BACKUP
-curl -fsS --retry 3 https://hc-ping.com/15a8af78-b3f1-4b2e-8b4f-17a86979f3f5 > /dev/null 
+#curl -fsS --retry 3 https://hc-ping.com/15a8af78-b3f1-4b2e-8b4f-17a86979f3f5 > /dev/null 
 
 echo -e "\n\nPerforming globals backup"
 echo -e "--------------------------------------------\n"
@@ -191,51 +166,49 @@ do
 	if [ $ENABLE_CUSTOM_BACKUPS = "yes" ]
 	then
 		echo "Custom backup of $DATABASE"
+
+		if ! mkdir -p $FINAL_BACKUP_DIR"$DATABASE"; then
+        		echo "Cannot create backup directory in $FINAL_BACKUP_DIR'$DATABASE'. Go and fix it!" 1>&2
+        		exit 1;
+		fi;
+
+		rm -rf $FINAL_BACKUP_DIR"$DATABASE/current"
+
+		if ! mkdir -p $FINAL_BACKUP_DIR"$DATABASE/current"; then
+			echo "Cannot create backup directory in $FINAL_BACKUP_DIR'$DATABASE'. Go and fix it!" 1>&2
+			exit 1;
+		fi;
+
+		if ! mkdir -p $FINAL_BACKUP_DIR"$DATABASE/old"; then
+			echo "Cannot create backup directory in $FINAL_BACKUP_DIR'$DATABASE'. Go and fix it!" 1>&2
+			exit 1;
+		fi;
  
-		if ! pg_dump -Fc -Z 0 -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT -f $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress; then
+		if ! pg_dump -Fc -Z 0 -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT -f $FINAL_BACKUP_DIR"$DATABASE/current/$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress; then
 			echo "[!!ERROR!!] Failed to produce custom backup database $DATABASE" 1>&2
 		else
-			mv $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.dump
+			mv $FINAL_BACKUP_DIR"$DATABASE/current/$DATABASE"$FINAL_BACKUP_NAME.dump.in_progress $FINAL_BACKUP_DIR"$DATABASE/current/$DATABASE"$FINAL_BACKUP_NAME.dump
 		fi
+
+		echo -e " "
+		echo -e "Copying current backup to old backup"
+		cp -R $FINAL_BACKUP_DIR"$DATABASE/current/." $FINAL_BACKUP_DIR"$DATABASE/old"
+
+		## PING HEALTHCHECKS BEFORE UPLOADING BACKUP FILES
+		curl -fsS --retry 3 https://hc-ping.com/847a8225-81fd-4100-a0dd-702d2201aa48 > /dev/null
+
+		echo -e " "
+		echo -e "Sync current backup to azure blob"
+		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/current" "https://telinmystore.blob.core.windows.net/pg-back-rest-testing/$CURRENT_DATE/$DATABASE/current/?st=2019-09-16T03%3A17%3A04Z&se=2019-09-17T03%3A17%3A04Z&sp=racwdl&sv=2018-03-28&sr=c&sig=J6aRXS7Y4KBZfmvGUqnHc2Z8buiuv4SdFPCdqVDxC2w%3D" --delete-destination=true
+
+		echo -e " "
+		echo -e "Sync old backup to azure blob"
+		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/old" "https://telinmystore.blob.core.windows.net/pg-back-rest-testing/$CURRENT_DATE/$DATABASE/old/?st=2019-09-16T03%3A17%3A04Z&se=2019-09-17T03%3A17%3A04Z&sp=racwdl&sv=2018-03-28&sr=c&sig=J6aRXS7Y4KBZfmvGUqnHc2Z8buiuv4SdFPCdqVDxC2w%3D"
+
 	fi
  
 done
 
-#############################################
-### CLEANING DIRECTORY FROM *.in_progress ###
-#############################################
-
-echo -e " "
-echo -e "Cleaning directory from *.in_progress files..."
-
-countInProgress=`ls $FINAL_BACKUP_DIR -1 *.in_progress 2>/dev/null | wc -l`
-if [ $countInProgress != 0 ]
-then
-	cd $FINAL_BACKUP_DIR
-	find . -name '*.in_progress' -exec mv '{}' $FINAL_BACKUP_DIR_OLD \;
-	echo -e "\nDirectory cleaned from *.in_progress files."
-fi
-
-echo -e " "
-
-######################################
-### COPY BACKUP FILE TO AZURE BLOB ###
-######################################
-
-## PING HEALTHCHECKS BEFORE UPLOADING BACKUP FILES
-curl -fsS --retry 3 https://hc-ping.com/847a8225-81fd-4100-a0dd-702d2201aa48 > /dev/null
-
-echo -e " "
-echo -e "Uploading backup files to Azure Storage..."
-
-azcopy \
-	--source $BACKUP_DIR \
-	--destination $BLOB_LINK_CONTAINER \
-	--dest-key $BLOB_ACCOUNT_KEY \
-	--recursive \
-	--quiet
-
-echo -e "Backup files uploaded."
 echo -e " "
 ## PING HEALTHCHECKS AFTER UPLOADING BACKUP FILES
 curl -fsS --retry 3 https://hc-ping.com/e4469c45-aeaa-4462-b535-5ba7829c6bd8 > /dev/null
