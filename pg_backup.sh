@@ -199,11 +199,11 @@ do
 
 		echo -e " "
 		echo -e "Sync current backup to azure blob"
-		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/current" "https://telinmystore.blob.core.windows.net/pg-back-rest-testing/$CURRENT_DATE/$DATABASE/current/?st=2019-09-16T03%3A17%3A04Z&se=2019-09-17T03%3A17%3A04Z&sp=racwdl&sv=2018-03-28&sr=c&sig=J6aRXS7Y4KBZfmvGUqnHc2Z8buiuv4SdFPCdqVDxC2w%3D" --delete-destination=true
+		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/current" "$BLOB_URL/$CURRENT_DATE/$DATABASE/current/$BLOB_SAS" --delete-destination=true
 
 		echo -e " "
 		echo -e "Sync old backup to azure blob"
-		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/old" "https://telinmystore.blob.core.windows.net/pg-back-rest-testing/$CURRENT_DATE/$DATABASE/old/?st=2019-09-16T03%3A17%3A04Z&se=2019-09-17T03%3A17%3A04Z&sp=racwdl&sv=2018-03-28&sr=c&sig=J6aRXS7Y4KBZfmvGUqnHc2Z8buiuv4SdFPCdqVDxC2w%3D"
+		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/old" "$BLOB_URL/$CURRENT_DATE/$DATABASE/old/$BLOB_SAS"
 
 	fi
  
