@@ -62,7 +62,7 @@ fi;
 ##### STARTING DELETE #####
 ###########################
  
-TARGET_DATE=`date -d "-5 day" +%Y-%d-%m` 
+TARGET_DATE=`date -d "-5 day" +%Y-%m-%d` 
  
 FULL_BACKUP_QUERY="select datname from pg_database where not datistemplate and datallowconn order by datname;"
  
@@ -73,7 +73,11 @@ for DATABASE in `psql -h "$HOSTNAME" -U "$USERNAME" -p $PORT -At -c "$FULL_BACKU
 do
 	if [ $ENABLE_CUSTOM_BACKUPS = "yes" ]
 	then
-        /root/pg_backup/azcopy rm $BLOB_URL"/$TARGET_DATE/$DATABASE/old/$BLOB_SAS" --include "*.dump"
+        /root/pg_backup/azcopy rm $BLOB_URL"/$TARGET_DATE/$DATABASE/old/$BLOB_SAS" --recursive --include "*.dump"
+
+        echo -e " "
+        echo -e "Delete succesful."
+
 	fi
  
 done
