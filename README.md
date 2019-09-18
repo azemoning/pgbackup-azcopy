@@ -1,13 +1,18 @@
-# POSTGRESQL AUTOMATED BACKUP SCRIPT
+# PostgreSQL Automated Backup Script on Linux
 
-POSTGRESQL backup script and auto upload to azure blob storage.
+PostgreSQL Backup Script and Auto Upload to Azure Storage.
+
+This base script forked from [Automated Backup on Linux - PostgreSQL wiki](https://wiki.postgresql.org/wiki/Automated_Backup_on_Linux)
 
 ## Usage
 
 ### Prerequisite
 
+To use this script, you need to have Azure Storage account on Azure  
+See: [Azure Storage Quickstart](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal)
+
 Before configuring or deploying image, you need to create an account at [Healthchecks.io](https://healthcheks.io). Create new project and add check on that project.\
-After adding a new check, copy **Ping URL** and replace the url at the curl command on [pg_backup.sh](https://github.com/azemoning/pgbackrest/blob/master/pg_backup.sh).
+After adding a new check, copy **Ping URL** and replace the url at the ```curl``` command on [pg_backup.sh](https://github.com/azemoning/pgbackrest/blob/master/pg_backup.sh).
 
 Example:
 
