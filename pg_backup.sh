@@ -3,13 +3,6 @@
 ## export environment variable into cron env
 export $(cat /root/pg_backup/env.env | xargs)
 
-
-## kill running cpulimit process before starting new process
-pkill cpulimit
-
-## limit azcopy process
-#cpulimit -e azcopy -l 20 -b
-
 ###########################
 ####### LOAD CONFIG #######
 ###########################
@@ -86,7 +79,7 @@ fi;
 #######################
  
 ## PING HEALTHCHECKS BEFORE STARTING BACKUP
-#curl -fsS --retry 3 https://hc-ping.com/15a8af78-b3f1-4b2e-8b4f-17a86979f3f5 > /dev/null 
+curl -fsS --retry 3 https://hc-ping.com/15a8af78-b3f1-4b2e-8b4f-17a86979f3f5 > /dev/null 
 
 echo -e "\n\nPerforming globals backup"
 echo -e "--------------------------------------------\n"
