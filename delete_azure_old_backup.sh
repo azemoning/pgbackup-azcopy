@@ -76,7 +76,7 @@ do
         ## Pinging healthchecks to inform that deleting blob will be started.
         curl -fsS --retry 3 https://hc-ping.com/05e5688a-8e46-4357-a11b-740f6d54f4fe > /dev/null
     
-        /root/pg_backup/azcopy rm $BLOB_URL"/$TARGET_DATE/$DATABASE/old/$BLOB_SAS" --recursive --include "*.dump"
+        /root/pg_backup/azcopy rm "$BLOB_URL/$TARGET_DATE/$DATABASE/old/$BLOB_SAS" --recursive --include "*.dump"
 
         echo -e " "
         echo -e "Delete succesful."
