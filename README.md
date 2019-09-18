@@ -21,6 +21,11 @@ After that, you can rebuild the image and then deploy it on your own project.
 docker build -t pgbackup_azcopy .
 ```
 
+**You need to prepare your Azure Storage Shared Access Signature (SAS) before continuing**  
+See: 
+- [Grant limited access to Azure Storage resources using shared access signatures (SAS)](https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview)
+- [Generating SAS Token](https://docs.snowflake.net/manuals/user-guide/data-load-azure-config.html#generating-an-sas-token)
+
 ### Deploy  
 
 Make sure to set environment variables below to use the script:
@@ -31,8 +36,8 @@ export PGPASSWORD="password"
 export PGDB_HOST="host"
 export PGDB_USERNAME="username"
 export PGDB_PORT="5432"
-export BLOB_ACCOUNT_KEY="account-key"
-export BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
+export BLOB_URL="Storage_Resource_URI"
+export BLOB_SAS="SAS_Token"
 ```
 
 OR
@@ -45,21 +50,21 @@ ENV PGPASSWORD="password"
 ENV PGDB_HOST="host"
 ENV PGDB_USERNAME="username"
 ENV PGDB_PORT="5432"
-ENV BLOB_ACCOUNT_KEY="account-key"
-ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
+ENV BLOB_URL="Storage_Resource_URI"
+ENV BLOB_SAS="SAS_Token"
 ```
 
 And then deploy with this dockerfile
 
 ```dockerfile
-FROM pgbackup_azcopy ## CHANGE WITH YOUR OWN IMAGE
+FROM pgbackup_azcopy ## CHANGE WITH YOUR OWN IMAGE NAME
 ENV PGSSLMODE="allow"
 ENV PGPASSWORD="password"
 ENV PGDB_HOST="host"
 ENV PGDB_USERNAME="username"
 ENV PGDB_PORT="5432"
-ENV BLOB_ACCOUNT_KEY="account-key"
-ENV BLOB_LINK_CONTAINER="https://myaccount.blob.core.windows.net/mycontainer"
+ENV BLOB_URL="Storage_Resource_URI"
+ENV BLOB_SAS="SAS_Token"
 RUN env > env.env
 CMD cron && tail -f /var/log/cron_backup.log
 ```
@@ -69,7 +74,7 @@ CMD cron && tail -f /var/log/cron_backup.log
 Clone this repository.
 
 ```bash
-git clone https://github.com/azemoning/pgbackrest.git
+git clone https://github.com/azemoning/pgbackup-azcopy.git
 ```
 
 Open **pg_restore.sh** with your text editor.\
