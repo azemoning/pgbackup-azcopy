@@ -68,14 +68,18 @@ FULL_BACKUP_QUERY="select datname from pg_database where not datistemplate and d
  
 echo -e "\n\nPerforming delete"
 echo -e "--------------------------------------------\n"
- 
+## Pinging healthchecks to inform that deleting blob will be started.
+curl -fsS --retry 3 https://hc-ping.com/05e5688a-8e46-4357-a11b-740f6d54f4fe > /dev/null 
+
 for DATABASE in `psql -h "$HOSTNAME" -U "$USERNAME" -p $PORT -At -c "$FULL_BACKUP_QUERY" postgres`
 do
 	if [ $ENABLE_CUSTOM_BACKUPS = "yes" ]
 	then
-        ## Pinging healthchecks to inform that deleting blob will be started.
-        curl -fsS --retry 3 https://hc-ping.com/05e5688a-8e46-4357-a11b-740f6d54f4fe > /dev/null
-    
+
+        echo -e " "
+        echo -e `date -d "-5 day" +%Y-%m-%d-%T`
+        echo -e "Deleting $DATABASE/old"
+        
         /root/pg_backup/azcopy rm "$BLOB_URL/$TARGET_DATE/$DATABASE/old/$BLOB_SAS" --recursive --include "*.dump"
 
         echo -e " "
