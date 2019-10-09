@@ -198,6 +198,12 @@ do
 		echo -e "Sync old backup to azure blob"
 		/root/pg_backup/azcopy sync "$FINAL_BACKUP_DIR$DATABASE/old" "$BLOB_URL/$CURRENT_DATE/$DATABASE/old/$BLOB_SAS"
 
+		## Sync backup log & delete backup log to azure
+		echo -e " "
+		echo -e "Synchronizing log files to azure blob"
+		/root/pg_backup/azcopy sync "/var/log/cron_backup.log" "$BLOB_URL/$CURRENT_DATE/$DATABASE/"
+		/root/pg_backup/azcopy sync "/var/log/cron_delete.log" "$BLOB_URL/$CURRENT_DATE/$DATABASE/"
+
 	fi
  
 done
