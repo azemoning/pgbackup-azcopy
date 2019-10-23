@@ -88,7 +88,7 @@ if [ $ENABLE_GLOBALS_BACKUPS = "yes" ]
 then
         echo "Globals backup"
  
-        if ! cpulimit -l 30 -- pg_dumpall -g -h "$HOSTNAME" -U "$USERNAME" -p $PORT | gzip > $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
+        if ! pg_dumpall -g -h "$HOSTNAME" -U "$USERNAME" -p $PORT | gzip > $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
                 echo "[!!ERROR!!] Failed to produce globals backup" 1>&2
         else
                 mv $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz.in_progress $FINAL_BACKUP_DIR"globals"$FINAL_BACKUP_NAME.sql.gz
@@ -149,7 +149,7 @@ do
 	then
 		echo "Plain backup of $DATABASE"
  
-		if ! cpulimit -l 30 -- pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT | gzip > $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
+		if ! pg_dump -Fp -h "$HOSTNAME" -U "$USERNAME" "$DATABASE" -p $PORT | gzip > $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz.in_progress; then
 			echo "[!!ERROR!!] Failed to produce plain backup database $DATABASE" 1>&2
 		else
 			mv $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz.in_progress $FINAL_BACKUP_DIR"$DATABASE"$FINAL_BACKUP_NAME.sql.gz
@@ -200,9 +200,9 @@ do
 
 		## Sync backup log & delete backup log to azure
 		echo -e " "
-		echo -e "Synchronizing log files to azure blob"
-		/root/pg_backup/azcopy sync "/var/log/cron_backup.log" "$BLOB_URL/$CURRENT_DATE/$DATABASE/"
-		/root/pg_backup/azcopy sync "/var/log/cron_delete.log" "$BLOB_URL/$CURRENT_DATE/$DATABASE/"
+		echo -e "Synchronizing log files to azure blob..."
+		/root/pg_backup/azcopy sync "/var/log/cron_backup.log" "$BLOB_URL/$CURRENT_DATE"
+		/root/pg_backup/azcopy sync "/var/log/cron_delete.log" "$BLOB_URL/$CURRENT_DATE"
 
 	fi
  
