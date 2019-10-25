@@ -16,4 +16,4 @@ RUN wget -O azcopyv10.tar https://azcopyvnext.azureedge.net/release20190703/azco
     && ./azcopy
 RUN chmod +x *.sh && \
     cp backupcron /etc/cron.d/ && chmod 0644 /etc/cron.d/backupcron && \
-    touch /var/log/cron_backup.log /var/log/cron_delete.log
+    touch /var/log/cron_backup.log /var/log/cron_delete.log && mkdir /var/log/pgbackup
