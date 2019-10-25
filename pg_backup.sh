@@ -201,8 +201,10 @@ do
 		## Sync backup log & delete backup log to azure
 		echo -e " "
 		echo -e "Synchronizing log files to azure blob..."
-		/root/pg_backup/azcopy sync "/var/log/cron_backup.log" "$BLOB_URL/$CURRENT_DATE"
-		/root/pg_backup/azcopy sync "/var/log/cron_delete.log" "$BLOB_URL/$CURRENT_DATE"
+		cp /var/log/cron_backup.log /var/log/pgbackup
+		cp /var/log/cron_delete.log /var/log/pgbackup
+		/root/pg_backup/azcopy sync "/var/log/pgbackup" "$BLOB_URL/$CURRENT_DATE/$BLOB_SAS"
+		rm /var/log/pgbackup/*.log
 
 	fi
  
