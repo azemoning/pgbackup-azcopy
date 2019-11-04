@@ -1,4 +1,4 @@
 */15 * * * * root /root/pg_backup/pg_backup.sh >> /var/log/cron_backup.log 2>&1
-*/50 * * * * root /root/pg_backup/delete_backup.sh >> /var/log/cron_delete.log 2>&1
+*/35 * * * * root /root/pg_backup/delete_backup.sh >> /var/log/cron_delete.log 2>&1
 0 1 * * * root /root/pg_backup/delete_azure_old_backup.sh >> /var/log/cron_delete.log 2>&1 
 # Don't remove the empty line at the end of this file. It is required to run the cron job
