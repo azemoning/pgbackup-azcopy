@@ -7,6 +7,8 @@ echo -e " "
 echo -e "Deleting local old backup files..."
 
 ## START DELETING OLD BACKUP FILES
+
+find /root/pg_backup/backup_dir -name "*.sql.gz" -type f -delete
 find /root/pg_backup/backup_dir -name "*.dump" -type f -delete
 
 echo -e "Delete complete."
